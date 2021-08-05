@@ -17,20 +17,54 @@ afterAll(async () => {
   await getConnection().close();
 });
 
-describe("GET /users", () => {
-  it("should answer with text \"OK!\" and status 200", async () => {
-    const user = await createUser();
+const agent = supertest(app);
 
-    const response = await supertest(app).get("/users");
-    
-    expect(response.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          email: user.email
-        })
-      ])
-    );
+describe("POST /sign-up", () => {
 
-    expect(response.status).toBe(200);
+  function generateBody (){
+    return {
+      email: "a@a.com",
+      password: "123456",
+      confirmPassword: "123456"
+    }
+
+  }
+
+  it("should return status 201 when receive valid body", async () => {
+    const body = generateBody();
+
+    const response = await agent.post("/sign-up").send(body);
+
+    expect(response.status).toBe(201);
   });
+
+  it("should return status 400 when receive invalid body", async () => {
+    const body = generateBody();
+    body.password = "";
+
+    const response = await agent.post("/sign-up").send(body);
+
+    expect(response.status).toBe(400);
+  });
+
+  it("should return status 400 when receive 'password' and 'confirPassrd' are not identicals", async () => {
+    const body = generateBody();
+    body.password = "wrong_password"
+
+    const response = await agent.post("/sign-up").send(body);
+
+    expect(response.status).toBe(400);
+  });
+
+  it("should return status 409 when email already exists in the database", async () => {
+    const body = generateBody();
+
+    await createUser(body.email, body.password);
+
+    const response = await agent.post("/sign-up").send(body);
+
+    expect(response.status).toBe(409);
+  });
+
+
 });
