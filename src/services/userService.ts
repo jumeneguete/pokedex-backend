@@ -13,7 +13,6 @@ export async function signUp (email: string, password: string) {
 
   await getRepository(User).insert({ email, password: hashedPassword });
   return true;
-
 }
 
 export async function validateUser (email: string, password: string) {

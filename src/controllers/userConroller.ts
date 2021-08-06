@@ -11,7 +11,6 @@ interface signUpBoby {
 }
 
 export async function signUp (req: Request, res: Response) {
-  try {
     const { email, password, confirmPassword } = req.body as signUpBoby;
 
     const validate = signUpBodySchema.validate(req.body)
@@ -22,14 +21,9 @@ export async function signUp (req: Request, res: Response) {
     const successSignUp = await userService.signUp(email, password);
     if(successSignUp === false) return res.sendStatus(409);
     res.sendStatus(201);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
 }
 
 export async function signIn (req: Request, res: Response) {
-  try {
     const { email, password } = req.body as {email: string, password: string};
 
     const validate = signInBobySchema.validate(req.body)
@@ -41,8 +35,4 @@ export async function signIn (req: Request, res: Response) {
     const token = await userService.signIn(validUser);
 
     res.status(200).send({ token });
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
 }
