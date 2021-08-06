@@ -11,7 +11,7 @@ export async function getPokemons (req: Request, res: Response) {
     const user = await userService.authenticate(token);
     if (user === null) return res.sendStatus(401);
 
-    const pokemons = await pokemonService.getPokemons();
+    const pokemons = await pokemonService.getPokemons(user.id);
 
     res.status(200).send(pokemons);
 

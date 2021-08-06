@@ -38,6 +38,7 @@ describe("POST /sign-up", () => {
                     height: expect.any(String),
                     baseExp: expect.any(String),
                     description: expect.any(String),
+                    inMyPokemons: expect.any(Boolean),
                 })
             ])
         );
@@ -75,10 +76,6 @@ describe("POST /sign-up", () => {
 
         expect(response.status).toBe(401);
     });
-
-    
-
-
 
 
 });

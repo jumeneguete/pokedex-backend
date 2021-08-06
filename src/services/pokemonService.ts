@@ -1,8 +1,42 @@
 import { getRepository } from "typeorm";
 import Pokemon from "../entities/Pokemon";
+import userPokemon from "../entities/userPokemon";
 
-export async function getPokemons () {
-  const pokemons = await getRepository(Pokemon).find();
-  return pokemons;
-  
-  }
+interface newPokemons {
+    id: number,
+    name: string,
+    number: string,
+    image: string,
+    weight: string,
+    height: string,
+    baseExp: string,
+    description: string,
+    inMyPokemons: boolean
+}
+
+export async function getPokemons(userId: number) {
+    const pokemons = await getRepository(Pokemon).find();
+
+    const newPokemons: newPokemons[] = pokemons.map(p => {
+        return { ...p, inMyPokemons: false }
+    });
+
+    return newPokemonsWithMyPokemons(userId, newPokemons);
+
+}
+
+async function newPokemonsWithMyPokemons( userId: number, newPokemons: newPokemons[]){
+    const inMyPokemons = await getRepository(userPokemon).find({ where: { userId } });
+    const pokeIds = inMyPokemons.map(poke => poke.pokemonId);
+
+    for (let i = 0; i < newPokemons.length; i++) {
+        const myPokemonId = newPokemons[i].id;
+        for (let j = 0; j < pokeIds.length; j++) {
+            if (myPokemonId === Number(pokeIds[j])) {
+                newPokemons[i].inMyPokemons = true;
+            }
+        }
+    }
+
+    return newPokemons;
+}
