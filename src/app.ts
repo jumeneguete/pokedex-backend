@@ -21,6 +21,7 @@ app.use('/my-pokemons', authentication);
 app.use('/pokemons', authentication)
 
 app.get("/pokemons", pokemonController.getPokemons);
+app.get("/insert-pokemons", pokemonController.insertAllPokemons);
 app.post("/my-pokemons/:id/add", pokemonController.addPokemon);
 app.post("/my-pokemons/:id/remove", pokemonController.removePokemon);
 

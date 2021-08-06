@@ -1,3 +1,4 @@
+import axios from "axios";
 import { getRepository } from "typeorm";
 import Pokemon from "../entities/Pokemon";
 import userPokemon from "../entities/userPokemon";
@@ -62,3 +63,28 @@ async function newPokemonsWithMyPokemons(userId: number, newPokemons: newPokemon
 
     return newPokemons;
 }
+
+export async function insertAllPokemons() {
+    for(let i = 1; i < 100; i ++){
+        const result = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`);
+        const newPokemon = {
+            name: result.data.name,
+            number: result.data.id,
+            image: result.data.sprites.front_default,
+            weight: result.data.weight,
+            height: result.data.height,
+            baseExp: result.data.base_experience,
+            description: ""
+        }
+        const characteristic = await axios.get(`https://pokeapi.co/api/v2/characteristic/${i}`);
+        for (let j = 1; j < 100; j++) {
+                newPokemon.description = characteristic.data.descriptions[2].description;
+        }
+
+        console.log(newPokemon)
+        await getRepository(Pokemon).insert(newPokemon);
+    }
+    return true;
+}
+
+
