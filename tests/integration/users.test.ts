@@ -67,4 +67,77 @@ describe("POST /sign-up", () => {
   });
 
 
+  // it("should return status 201 when receive valid body", async () => {
+  //   const user = await createUser();
+
+  //   const response = await supertest(app).get("/users");
+    
+  //   expect(response.body).toEqual(
+  //     expect.arrayContaining([
+  //       expect.objectContaining({
+  //         email: user.email
+  //       })
+  //     ])
+  //   );
+
+  //   expect(response.status).toBe(200);
+  // });
+});
+
+
+
+
+describe("POST /sign-in", () => {
+
+  function generateBody (){
+    return {
+      email: "a@a.com",
+      password: "123456"
+    }
+
+  }
+
+  it("should return status 200 for a valid body of an existing user", async () => {
+    const body = generateBody();
+    await createUser(body.email, body.password);
+
+    const response = await agent.post("/sign-in").send(body);
+   
+    expect(response.status).toBe(200);
+  });
+
+  it("should return status 400 when receive an invalid body", async () => {
+    const body = generateBody();
+    await createUser(body.email, body.password);
+    body.email = "not_email";
+
+    const response = await agent.post("/sign-in").send(body);
+
+    expect(response.status).toBe(400);
+  });
+
+  it("should return status 401 when user does not exist", async () => {
+    const body = generateBody();
+
+    const response = await agent.post("/sign-in").send(body);
+
+    expect(response.status).toBe(401);
+  });
+
+
+  // it("should return status 201 when receive valid body", async () => {
+  //   const user = await createUser();
+
+  //   const response = await supertest(app).get("/users");
+    
+  //   expect(response.body).toEqual(
+  //     expect.arrayContaining([
+  //       expect.objectContaining({
+  //         email: user.email
+  //       })
+  //     ])
+  //   );
+
+  //   expect(response.status).toBe(200);
+  // });
 });
