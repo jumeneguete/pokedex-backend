@@ -35,8 +35,10 @@ export async function signIn (req: Request, res: Response) {
     const validate = signInBobySchema.validate(req.body)
     if(validate.error) return res.sendStatus(400);
 
-    const token = await userService.signIn(email, password);
-    if(token === false) return res.sendStatus(401);
+    const validUser = await userService.validateUser(email, password);
+    if(!validUser) return res.sendStatus(401);
+
+    const token = await userService.signIn(validUser);
 
     res.status(200).send({ token });
   } catch (err) {
