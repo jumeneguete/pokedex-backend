@@ -25,7 +25,37 @@ export async function getPokemons(userId: number) {
 
 }
 
-async function newPokemonsWithMyPokemons( userId: number, newPokemons: newPokemons[]){
+export async function addPokemon(userId: number, pokemonId: number) {
+    const findPokemon = await getRepository(Pokemon).findOne({ where: { id: pokemonId } });
+    if (!findPokemon) return false;
+
+    // const myPokemons = await getPokemons(userId);
+    // const alreadyAdded = myPokemons.filter(p => p.inMyPokemons === true && p.id === pokemonId);
+    // if(alreadyAdded.length > 0) return null; //ja esta adicionado aos favoritos
+
+    await getRepository(userPokemon).insert({ userId, pokemonId });
+
+    return true;
+}
+
+export async function removePokemon(userId: number, pokemonId: number) {
+    const findPokemon = await getRepository(Pokemon).findOne({ where: { id: pokemonId } });
+    if (!findPokemon) return false;
+
+    // const myPokemons = await getPokemons(userId);
+    // const alreadyAdded = myPokemons.filter(p => p.inMyPokemons === true && p.id === pokemonId);
+    // if(alreadyAdded.length === 0) return false; //nao esta adicionado aos favoritos
+
+    await getRepository(userPokemon)
+            .createQueryBuilder()
+            .delete()
+            .where({ userId, pokemonId })
+            .execute();
+
+    return true;
+}
+
+async function newPokemonsWithMyPokemons(userId: number, newPokemons: newPokemons[]) {
     const inMyPokemons = await getRepository(userPokemon).find({ where: { userId } });
     const pokeIds = inMyPokemons.map(poke => poke.pokemonId);
 

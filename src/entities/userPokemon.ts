@@ -8,10 +8,10 @@ export default class userPokemon {
   id: number;
 
   @Column()
-  userId: string;
+  userId: number;
 
   @Column()
-  pokemonId: string;
+  pokemonId: number;
 
   @ManyToOne(() => User, user => user.userPokemons)
   user: User;

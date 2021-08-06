@@ -1,11 +1,10 @@
-import bcrypt from "bcrypt";
 import { getRepository } from "typeorm";
 import Session from "../../src/entities/Session";
 
 import User from "../../src/entities/User";
 
 export async function createUser (email: string, password: string) {
-  const user = await getRepository(User).create({
+  const user = getRepository(User).create({
     email,
     password
   });
@@ -20,7 +19,7 @@ export async function createSession(userId: number) {
       token: "fakeToken123456#%&&"
   };
 
- const newSession = await getRepository(Session).create({
+ const newSession = getRepository(Session).create({
       userId,
       token: session.token
   });
